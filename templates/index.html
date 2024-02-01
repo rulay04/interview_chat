@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Interview Prep Chatbot</title>
+</head>
+
+<body>
+    <h1>Interview Prep Chatbot</h1>
+    <div id="chat-container">
+        {% for message in chat_history %}
+        {% if message.role == 'assistant' %}
+        {% set questions = message.content.split('\d+\.') %}
+        <!-- Render each question on a new line -->
+        {% for question in questions %}
+        {% if question %}
+        <p class="message assistant-message">{{ message.role.capitalize() }}: {{ question | safe }}</p>
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <!-- Render other messages normally -->
+        <p class="message {{ message.role }}-message">{{ message.role.capitalize() }}: {{ message.content | safe }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <!-- Other HTML content -->
+
+    <form id="chat-form" action="/chat" method="post">
+        <!-- Use textarea for user input -->
+        <textarea id="user-input" name="user_input" placeholder="Type your message"></textarea>
+        <input type="submit" value="Send">
+    </form>
+    <script>
+        const textarea = document.getElementById('user-input');
+        const form = document.getElementById('chat-form');
+
+        textarea.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Prevents the newline
+                form.submit();
+            }
+        });
+    </script>
+
+    <!-- Other HTML content -->
+
+</body>
+
+
+</html>
